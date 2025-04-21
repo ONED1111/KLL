@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>热量计算器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f4f7f6;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<h2>热量计算器</h2>
+<div class="container">
+  <div class="form-group">
+    <label for="weight">总重量 (克):</label>
+    <input type="number" id="weight" placeholder="例如：60" required>
+  </div>
+
+  <div class="form-group">
+    <label for="energy_per_100g">每 100g 热量:</label>
+    <input type="number" id="energy_per_100g" placeholder="例如：1245" required>
+  </div>
+
+  <div class="form-group">
+    <label for="energy_unit">选择热量单位:</label>
+    <select id="energy_unit">
+      <option value="kJ">千焦 (kJ)</option>
+      <option value="kcal">千卡 (kcal)</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="portions">份数:</label>
+    <input type="number" id="portions" placeholder="例如：6" required>
+  </div>
+
+  <button onclick="calculateCalories()">计算热量</button>
+
+  <div class="result" id="result">
+    <p id="total_calories"></p>
+    <p id="calories_per_portion"></p>
+  </div>
+</div>
+
+<script>
+  function calculateCalories() {
+    const weight = parseFloat(document.getElementById("weight").value);
+    const energyPer100g = parseFloat(document.getElementById("energy_per_100g").value);
+    const energyUnit = document.getElementById("energy_unit").value;
+    const portions = parseFloat(document.getElementById("portions").value);
+
+    if (!weight || !energyPer100g || !portions) {
+      alert("请填写所有字段！");
+      return;
+    }
+
+    // 计算每份重量
+    const portionSize = weight / portions;
+
+    let totalEnergy = (weight * energyPer100g) / 100;
+
+    if (energyUnit === 'kJ') {
+      totalEnergy = totalEnergy / 4.184;
+    }
+
+    const energyPerPortion = totalEnergy / portions;
+
+    document.getElementById("total_calories").innerText = `总热量：${totalEnergy.toFixed(2)} 千卡 (kcal)`;
+    document.getElementById("calories_per_portion").innerText = `每份热量：${energyPerPortion.toFixed(2)} 千卡 (kcal)`;
+  }
+</script>
+
+</body>
+</html>
