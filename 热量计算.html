@@ -65,7 +65,7 @@
   </div>
 
   <div class="form-group">
-    <label for="energy_per_100g">每 100g 热量:</label>
+    <label for="energy_per_100g" id="energy_label">每 100g 热量:</label>
     <input type="number" id="energy_per_100g" placeholder="例如：1245" required>
   </div>
 
@@ -78,8 +78,16 @@
   </div>
 
   <div class="form-group">
+    <label for="portion_size">选择热量表单位 (克):</label>
+    <select id="portion_size" onchange="updateEnergyLabel()">
+      <option value="100">每 100g</option>
+      <option value="30">每 30g</option>
+    </select>
+  </div>
+
+  <div class="form-group">
     <label for="portions">份数:</label>
-    <input type="number" id="portions" placeholder="例如：6" required>
+    <input type="number" id="portions" placeholder="例如：6" value="1" required>
   </div>
 
   <button onclick="calculateCalories()">计算热量</button>
@@ -91,24 +99,36 @@
 </div>
 
 <script>
+  // 更新热量表单位标签
+  function updateEnergyLabel() {
+    const portionSize = document.getElementById("portion_size").value;
+    const energyLabel = document.getElementById("energy_label");
+    if (portionSize === "30") {
+      energyLabel.innerText = "每 30g 热量:";
+    } else {
+      energyLabel.innerText = "每 100g 热量:";
+    }
+  }
+
   function calculateCalories() {
     const weight = parseFloat(document.getElementById("weight").value);
     const energyPer100g = parseFloat(document.getElementById("energy_per_100g").value);
     const energyUnit = document.getElementById("energy_unit").value;
     const portions = parseFloat(document.getElementById("portions").value);
+    const portionSize = parseFloat(document.getElementById("portion_size").value); // 获取热量表单位 (100g 或 30g)
 
     if (!weight || !energyPer100g || !portions) {
       alert("请填写所有字段！");
       return;
     }
 
-    // 计算每份重量
-    const portionSize = weight / portions;
+    // 根据选择的热量表单位（100g 或 30g）来调整热量
+    const adjustedEnergyPer100g = energyPer100g * (100 / portionSize); // 调整为每100克的热量
 
-    let totalEnergy = (weight * energyPer100g) / 100;
+    let totalEnergy = (weight * adjustedEnergyPer100g) / 100;
 
     if (energyUnit === 'kJ') {
-      totalEnergy = totalEnergy / 4.184;
+      totalEnergy = totalEnergy / 4.184; // 转换成千卡
     }
 
     const energyPerPortion = totalEnergy / portions;
